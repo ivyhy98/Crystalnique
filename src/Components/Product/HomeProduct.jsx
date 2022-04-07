@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import SingleProduct from './SingleProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { listProducts } from '../../redux/actions/productActions';
-import LoadingScreen from '../LoadingScreen';
 import { Message } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
 

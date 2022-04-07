@@ -12,7 +12,7 @@ const Container = styled.div`
 `;
 const InfoContainer = styled.div`
     flex: 1;
-    margin: 30px;
+    mar1222gin: 30px;
 `;
 
 const ImagesContainer = styled.div`
