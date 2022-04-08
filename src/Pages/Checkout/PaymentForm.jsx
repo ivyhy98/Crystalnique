@@ -4,8 +4,7 @@ import { Client, Environment } from 'square';
 import { useForm } from 'react-hook-form';
 import {commerce} from '../../lib/commerce';
 import { useNavigate } from 'react-router-dom';
-
-import {payments} from 'https://sandbox.web.squarecdn.com/v1/square.js'
+import { CircularProgress } from '@mui/material';
 
 
 const client = new Client({
@@ -98,23 +97,30 @@ const PaymentForm = ({checkout, nextStep, backStep, shippingData, onCaptureCheck
   const [cardToken, setCardToken] = useState({});
 
   useEffect(() => {
-    
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://sandbox.web.squarecdn.com/v1/square.js";
+    script.onload = () => setLoad(true)
+    document.head.appendChild(script);
   }, [])
 
-    
   //Initialize a card field
-  const payments = window.Square.payments(appId, locationId);
+  
+  
+  const payment = window.Square.payments(appId, locationId);
+  
   const initializeCard = async() => {
-      const card = await payments.card();
-      await card.attach('#card-container');
-      setCardToken(card);
-      console.log('Hello')
-      return card;
+        const card = await payment.card();
+        await card.attach('#card-container');
+        setCardToken(card);
+    console.log('Hello') 
+    return card;
   }
 
   useEffect(() => {
+    if(!isLoad) return;
     initializeCard();
-  }, []) 
+  }, [isLoad]) 
 
 
   
@@ -141,7 +147,7 @@ const PaymentForm = ({checkout, nextStep, backStep, shippingData, onCaptureCheck
       intent: 'CHARGE',
       billingContact: billingDetails(),
       };
-    const verificationResults = await payments.verifyBuyer(
+    const verificationResults = await payment.verifyBuyer(
       token,
       verificationDetails
     );
@@ -186,7 +192,7 @@ const PaymentForm = ({checkout, nextStep, backStep, shippingData, onCaptureCheck
       console.log(error.message);
       console.log("You're a failure")
       navigate('/')
-      alert('Order failed')
+      alert('Unable to complete the order at this time. Please try again Later.')
 
     }
     nextStep();
@@ -196,6 +202,7 @@ const PaymentForm = ({checkout, nextStep, backStep, shippingData, onCaptureCheck
   
 return (
   <>
+  { isLoad ? 
     <Container>
       <Title>Payment Details</Title>
         <DivContainer>
@@ -210,6 +217,7 @@ return (
       <ButtonDiv>
       </ButtonDiv>
     </Container>
+  : <CircularProgress /> }
       
   </>
   )
